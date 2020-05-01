@@ -15,6 +15,11 @@ public class Manager {
     private int phoneNumber;
     private String fName;
     private String lName;
+
+    @Override
+    public String toString() {
+        return "Manager{" + "staffId=" + staffId + ", SSN=" + SSN + ", phoneNumber=" + phoneNumber + ", fName=" + fName + ", lName=" + lName + ", mInit=" + mInit + ", sex=" + sex + ", address=" + address + ", salary=" + salary + '}';
+    }
     private String mInit;
     private String sex;
     private String address;

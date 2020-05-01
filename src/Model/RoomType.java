@@ -35,4 +35,9 @@ public class RoomType {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "RoomType{" + "roomTypeId=" + roomTypeId + ", costDaily=" + costDaily + ", description=" + description + '}';
+    }
 }

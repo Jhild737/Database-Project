@@ -16,6 +16,11 @@ public class FDeskAgent extends Staff{
         return wage;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " " + "FDeskAgent{" + "wage=" + wage + ", managerId=" + managerId + '}';
+    }
+
     public void setWage(double wage) {
         this.wage = wage;
     }

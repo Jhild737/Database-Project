@@ -75,6 +75,11 @@ public class Staff {
         this.sex = sex;
     }
 
+    @Override
+    public String toString() {
+        return "Staff{" + "staffId=" + staffId + ", SSN=" + SSN + ", phoneNumber=" + phoneNumber + ", fName=" + fName + ", mInit=" + mInit + ", lName=" + lName + ", address=" + address + ", sex=" + sex + '}';
+    }
+
     public Staff(int staffId, int SSN, int phoneNumber, String fName, String mInit, String lName, String address, String sex) {
         this.staffId = staffId;
         this.SSN = SSN;

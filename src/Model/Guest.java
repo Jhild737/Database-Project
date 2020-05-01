@@ -41,6 +41,11 @@ public class Guest {
         return mInit;
     }
 
+    @Override
+    public String toString() {
+        return "Guest{" + "guestNo=" + guestNo + ", phoneNumber=" + phoneNumber + ", fName=" + fName + ", lName=" + lName + ", mInit=" + mInit + ", sex=" + sex + '}';
+    }
+
     public String getSex() {
         return sex;
     }

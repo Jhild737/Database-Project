@@ -25,6 +25,11 @@ public class Housekeeper extends Staff {
         return managerId;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " " + "Housekeeper{" + "wage=" + wage + ", managerId=" + managerId + '}';
+    }
+
     public void setManagerId(int managerId) {
         this.managerId = managerId;
     }

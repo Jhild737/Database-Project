@@ -17,6 +17,11 @@ public class Reservation {
     private int noDaysStaying;
     private int guestNo;
     private int fDeskAgentNo;
+
+    @Override
+    public String toString() {
+        return "Reservation{" + "reservationNumber=" + reservationNumber + ", checkInDate=" + checkInDate + ", noDaysStaying=" + noDaysStaying + ", guestNo=" + guestNo + ", fDeskAgentNo=" + fDeskAgentNo + ", roomNo=" + roomNo + '}';
+    }
     private int roomNo;
 
     public void setCheckInDate(Date checkInDate) {

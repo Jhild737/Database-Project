@@ -15,6 +15,11 @@ import java.util.Date;
 public class Schedule {
     private int staffNo;
     private Date date;
+
+    @Override
+    public String toString() {
+        return "Schedule{" + "staffNo=" + staffNo + ", date=" + date + ", startTime=" + startTime + ", endTime=" + endTime + '}';
+    }
     private LocalTime startTime;
     private LocalTime endTime;
 

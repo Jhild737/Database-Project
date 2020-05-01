@@ -17,6 +17,11 @@ public class Room {
     }
     private int roomTypeId;
 
+    @Override
+    public String toString() {
+        return "Room{" + "roomNo=" + roomNo + ", roomTypeId=" + roomTypeId + '}';
+    }
+
     public int getRoomNo() {
         return roomNo;
     }

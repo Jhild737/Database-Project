@@ -175,14 +175,69 @@ public class Database {
                     + "', '" + manager.getAddress() + "', " + manager.getSalary() + ");";
             System.out.println(managerInsert);
             stmt.executeUpdate(managerInsert);
+            return true;
         } catch (SQLException e){
             System.out.println(e);
             return false;
-        } finally{
-            return true;
-        }
+        } 
     }
     
+    public static FDeskAgent getAgentByID(int staffId){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String getAgentByID = "SELECT * "
+                    + "FROM thurle1db.Staff as Staff, thurle1db.FDeskAgent as Agent "
+                    + "WHERE Staff.staffId = Agent.staffId "
+                    + "AND Staff.staffId = " + staffId + ";";
+            ResultSet rs = stmt.executeQuery(getAgentByID);
+            rs.next();
+            FDeskAgent myAgent = new FDeskAgent(rs.getInt("staffId"), 
+                    rs.getInt("SSN"), rs.getInt("phoneNumber"), 
+                    rs.getString("fName"), rs.getString("mInit"), 
+                    rs.getString("lName"), rs.getString("address"), 
+                    rs.getString("sex"), rs.getDouble("wage"), 
+                    rs.getInt("managerId"));
+            return myAgent;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static Housekeeper getHousekeeperByID(int staffId){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String getAgentByID = "SELECT * "
+                    + "FROM thurle1db.Staff as Staff, thurle1db.Housekeeper as Keeper "
+                    + "WHERE Staff.staffId = Keeper.staffId "
+                    + "AND Staff.staffId = " + staffId + ";";
+            ResultSet rs = stmt.executeQuery(getAgentByID);
+            rs.next();
+            Housekeeper myKeeper = new Housekeeper(rs.getInt("staffId"), 
+                    rs.getInt("SSN"), rs.getInt("phoneNumber"), 
+                    rs.getString("fName"), rs.getString("mInit"), 
+                    rs.getString("lName"), rs.getString("address"), 
+                    rs.getString("sex"), rs.getDouble("wage"), 
+                    rs.getInt("managerId"));
+            return myKeeper;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
     //JUST FOR TESTING PURPOSES
     public static void main(String[] args) {
         //FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
@@ -191,8 +246,9 @@ public class Database {
         //addHousekeeper(myKeeper);
         //List<FDeskAgent> list = getAgentsFromDB();
         //List<Housekeeper> list2 = getHousekeepersFromDB();
-        Manager myManager = new Manager(4, 222334444, 1104567898, "John", "Doe", "F", "M", "Some Address 3", 50000);
-        Database.addManager(myManager);
+        //Manager myManager = new Manager(4, 222334444, 1104567898, "John", "Doe", "F", "M", "Some Address 3", 50000);
+        //Database.addManager(myManager);
+        //FDeskAgent myAgent = Database.getAgentByID(1);
     }
     
 }
