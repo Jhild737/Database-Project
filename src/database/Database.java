@@ -5,6 +5,7 @@
  */
 package database;
 
+import Model.CleaningInfo;
 import Model.FDeskAgent;
 import Model.Guest;
 import Model.Housekeeper;
@@ -18,6 +19,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Calendar;
@@ -534,6 +536,79 @@ public class Database {
         }
     }
     
+    public static List<Reservation> getReservationsForDate(Date date){
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        String todaysDateString = format.format(date);
+        List<Reservation> reservations = new LinkedList();
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String getTodaysReservations = "SELECT * "
+                    + "FROM thurle1db.Reservation "
+                    + "WHERE checkInDate = '" + todaysDateString + "';";
+            ResultSet rs = stmt.executeQuery(getTodaysReservations);
+            while (rs.next()){
+                Reservation myRes = new Reservation(rs.getInt("reservationNumber"), 
+                    rs.getDate("checkInDate"), rs.getInt("noDaysStaying"), 
+                    rs.getInt("guestNo"), rs.getInt("fDeskAgentNo"), 
+                    rs.getInt("roomNo"));
+                reservations.add(myRes);
+            }
+            return reservations;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    public static boolean cleanRoom(Date dateCleaned, int roomNo, int housekeeperId){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return false;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String format = "yyyy-MM-dd";
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            String dateString = sdf.format(dateCleaned);
+            String cleanQuery = "INSERT INTO thurle1db.HousekeeperCleansRoom "
+                    + "VALUES(" + housekeeperId + ", " + roomNo 
+                    + ", '" + dateString + "')";
+            stmt.executeUpdate(cleanQuery);
+            return true;
+        } catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    public static CleaningInfo lastCleaningForRoom(int roomNo){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String lastCleaning = "";
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
     //JUST FOR TESTING PURPOSES
     public static void main(String[] args) {
         //FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
@@ -569,7 +644,16 @@ public class Database {
         //LocalTime endTime = LocalTime.of(15, 30);
         //Schedule mySchedule = new Schedule(1, date, startTime, endTime);
         //System.out.println(Database.assignSchedule(mySchedule));
-        System.out.println(Database.getScheduleForDay(Calendar.getInstance().getTime()));
+        //System.out.println(Database.getScheduleForDay(Calendar.getInstance().getTime()));
+        /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try{
+            Date date = sdf.parse("2020-05-10");
+            System.out.println(Database.getReservationsForDate(date));
+        } catch (ParseException e){
+            System.out.println(e);
+        } */
+        Date dateCleaned = Calendar.getInstance().getTime();
+        System.out.println(Database.cleanRoom(dateCleaned, 1, 3));
     }
     
 }

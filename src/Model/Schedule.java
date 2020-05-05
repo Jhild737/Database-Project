@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -18,7 +19,9 @@ public class Schedule {
 
     @Override
     public String toString() {
-        return "Schedule{" + "staffNo=" + staffNo + ", date=" + date + ", startTime=" + startTime + ", endTime=" + endTime + '}';
+        String format = "yyyy-MM-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return "Schedule{" + "staffNo=" + staffNo + ", date=" + sdf.format(date) + ", startTime=" + startTime + ", endTime=" + endTime + '}';
     }
     private LocalTime startTime;
     private LocalTime endTime;
