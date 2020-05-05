@@ -10,18 +10,20 @@ import Model.Guest;
 import Model.Housekeeper;
 import Model.Manager;
 import Model.Reservation;
+import Model.Room;
 import Model.RoomType;
+import Model.Schedule;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  *
@@ -400,6 +402,138 @@ public class Database {
         }
     }
     
+    public static List<Room> getOpenRoomsForDateRange(Date checkIn, int range){
+        List<Room> rooms = new LinkedList();
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String pattern = "yyyy-MM-dd";
+            SimpleDateFormat format = new SimpleDateFormat(pattern);
+            String getRooms = "SELECT * "
+                    + "FROM thurle1db.Room "
+                    + "WHERE roomNo NOT IN ( SELECT roomNo "
+                    + "FROM thurle1db.Reservation "
+                    + "WHERE(( '" + format.format(checkIn) + "'< checkInDate "
+                    + "AND checkInDate < ADDDATE('" + format.format(checkIn)
+                    + "', INTERVAL " + range + " DAY)) "
+                    + "OR ('" + format.format(checkIn) + "' < ADDDATE(checkInDate, INTERVAL noDaysStaying DAY) "
+                    + "AND ADDDATE(checkInDate, INTERVAL noDaysStaying DAY) < "
+                    + "ADDDATE('" + format.format(checkIn) + "', INTERVAL " + range + " DAY)) "
+                    + "OR (checkInDate <= '" + format.format(checkIn) + "' "
+                    + "AND ADDDATE('" + format.format(checkIn) +"', INTERVAL "+ range +" DAY) "
+                    + "<= ADDDATE(checkInDate, INTERVAL noDaysStaying DAY))));";
+            ResultSet rs = stmt.executeQuery(getRooms);
+            while(rs.next()){
+                Room myRoom = new Room(rs.getInt("roomNo"), rs.getInt("roomTypeId"));
+                rooms.add(myRoom);
+            }
+            return rooms;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static boolean assignManagerFDesk(FDeskAgent agent){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return false;
+        }
+        try {
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String updateManager = "UPDATE thurle1db.FDeskAgent "
+                    + "SET managerId = " + agent.getManagerId()
+                    + " WHERE staffId = " + agent.getStaffId() + ";";
+            stmt.executeUpdate(updateManager);
+            return true;
+        } catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    public static boolean assignManagerKeeper(FDeskAgent agent){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return false;
+        }
+        try {
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String updateManager = "UPDATE thurle1db.Housekeeper "
+                    + "SET managerId = " + agent.getManagerId()
+                    + " WHERE staffId = " + agent.getStaffId() + ";";
+            stmt.executeUpdate(updateManager);
+            return true;
+        } catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    public static boolean assignSchedule(Schedule sched){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return false;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String formatString = "yyyy-MM-dd";
+            SimpleDateFormat format = new SimpleDateFormat(formatString);
+            String scheduleQuery = "INSERT INTO thurle1db.Schedule "
+                    + "VALUES(" + sched.getStaffNo() + ", '" 
+                    + format.format(sched.getDate()) + "', '" 
+                    + sched.getStartTime() + "', '" 
+                    + sched.getEndTime() + "');";
+            stmt.executeUpdate(scheduleQuery);
+            return true;
+        } catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    
+    public static List<Schedule> getScheduleForDay(Date date){
+        List<Schedule> schedules = new LinkedList();
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String formatString = "yyyy/MM/dd";
+            SimpleDateFormat sdf = new SimpleDateFormat(formatString);
+            String selectString = "SELECT * "
+                    + "FROM thurle1db.Schedule "
+                    + "WHERE date = '" + sdf.format(date) + "';";
+            ResultSet rs = stmt.executeQuery(selectString);
+            while(rs.next()){
+                Schedule mySchedule = new Schedule(rs.getInt("staffNo"), date, 
+                        LocalTime.parse(rs.getString("startTime")), 
+                        LocalTime.parse(rs.getString("endTime")));
+                schedules.add(mySchedule);
+            }
+            return schedules;
+        }catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
     //JUST FOR TESTING PURPOSES
     public static void main(String[] args) {
         //FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
@@ -420,6 +554,22 @@ public class Database {
         //System.out.println(Database.getGuestInfoFromGuestNumber(1));
         //System.out.println(Database.getAllGuests());
         //System.out.println(Database.getRoomInformation(1));
+        //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        /*try {
+            Date date = format.parse("2020-05-11");
+            System.out.println(Database.getOpenRoomsForDateRange(date, 3));
+        } catch (ParseException ex) {
+            System.out.println(ex);
+        } */
+        //FDeskAgent agent = Database.getAgentByID(1);
+        //agent.setManagerId(4);
+        //System.out.println(Database.assignManagerFDesk(agent));
+        //Date date = Calendar.getInstance().getTime();
+        //LocalTime startTime = LocalTime.of(10, 30);
+        //LocalTime endTime = LocalTime.of(15, 30);
+        //Schedule mySchedule = new Schedule(1, date, startTime, endTime);
+        //System.out.println(Database.assignSchedule(mySchedule));
+        System.out.println(Database.getScheduleForDay(Calendar.getInstance().getTime()));
     }
     
 }
