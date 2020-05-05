@@ -602,7 +602,15 @@ public class Database {
         try{
             Connection conn = DriverManager.getConnection(SERVER, ID, PW);
             Statement stmt = conn.createStatement();
-            String lastCleaning = "";
+            String lastCleaning = "SELECT * \n" +
+                "FROM thurle1db.HousekeeperCleansRoom\n" +
+                "WHERE roomNo = " + roomNo +"\n" +
+                "ORDER BY dateCleaned DESC";
+            ResultSet rs = stmt.executeQuery(lastCleaning);
+            rs.next();
+            CleaningInfo clean = new CleaningInfo(rs.getInt("housekeeperId"), 
+                rs.getInt("roomNo"), rs.getDate("dateCleaned"));
+            return clean;
         } catch(SQLException e){
             System.out.println(e);
             return null;
@@ -652,8 +660,9 @@ public class Database {
         } catch (ParseException e){
             System.out.println(e);
         } */
-        Date dateCleaned = Calendar.getInstance().getTime();
-        System.out.println(Database.cleanRoom(dateCleaned, 1, 3));
+        //Date dateCleaned = Calendar.getInstance().getTime();
+        //System.out.println(Database.cleanRoom(dateCleaned, 1, 3));
+        System.out.println(Database.lastCleaningForRoom(1));
     }
     
 }
