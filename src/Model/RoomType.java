@@ -18,6 +18,10 @@ public class RoomType {
         this.costDaily = costDaily;
         this.description = description;
     }
+    public RoomType(double costDaily, String description) {
+        this.costDaily = costDaily;
+        this.description = description;
+    }
 
     public int getRoomTypeId() {
         return roomTypeId;

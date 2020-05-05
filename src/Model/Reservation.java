@@ -17,12 +17,11 @@ public class Reservation {
     private int noDaysStaying;
     private int guestNo;
     private int fDeskAgentNo;
-
+    private int roomNo;
     @Override
     public String toString() {
         return "Reservation{" + "reservationNumber=" + reservationNumber + ", checkInDate=" + checkInDate + ", noDaysStaying=" + noDaysStaying + ", guestNo=" + guestNo + ", fDeskAgentNo=" + fDeskAgentNo + ", roomNo=" + roomNo + '}';
     }
-    private int roomNo;
 
     public void setCheckInDate(Date checkInDate) {
         this.checkInDate = checkInDate;
@@ -56,12 +55,19 @@ public class Reservation {
         return roomNo;
     }
 
-    public Reservation(int reservationNumber, Date checkInDate, int noDaysStaying, int guestNo, int fDeskAgentNo, int roomNo) {
-        this.reservationNumber = reservationNumber;
+    public Reservation(Date checkInDate, int noDaysStaying, int guestNo, int fDeskAgentNo, int roomNo) {
         this.checkInDate = checkInDate;
         this.noDaysStaying = noDaysStaying;
         this.guestNo = guestNo;
         this.fDeskAgentNo = fDeskAgentNo;
         this.roomNo = roomNo;
+    }
+    public Reservation(int resNum, Date checkInDate, int noDaysStaying, int guestNo, int fDeskAgentNo, int roomNo) {
+        this.checkInDate = checkInDate;
+        this.noDaysStaying = noDaysStaying;
+        this.guestNo = guestNo;
+        this.fDeskAgentNo = fDeskAgentNo;
+        this.roomNo = roomNo;
+        this.reservationNumber = resNum;
     }
 }

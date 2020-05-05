@@ -50,12 +50,19 @@ public class Guest {
         return sex;
     }
 
-    public Guest(int guestNo, int phoneNumber, String fName, String lName, String mInit, String sex) {
-        this.guestNo = guestNo;
+    public Guest(int phoneNumber, String fName, String mInit, String lName, String sex) {
         this.phoneNumber = phoneNumber;
         this.fName = fName;
         this.lName = lName;
         this.mInit = mInit;
         this.sex = sex;
+    }
+    public Guest(int guestNo, int phoneNumber, String fName, String mInit, String lName, String sex) {
+        this.phoneNumber = phoneNumber;
+        this.fName = fName;
+        this.lName = lName;
+        this.mInit = mInit;
+        this.sex = sex;
+        this.guestNo = guestNo;
     }
 }

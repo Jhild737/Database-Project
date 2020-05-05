@@ -6,16 +6,22 @@
 package database;
 
 import Model.FDeskAgent;
+import Model.Guest;
 import Model.Housekeeper;
 import Model.Manager;
+import Model.Reservation;
+import Model.RoomType;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -238,6 +244,162 @@ public class Database {
             return null;
         }
     }
+    public static boolean createGuest(Guest guest){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return false;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String insertGuest = "INSERT INTO thurle1db.Guest "
+                    + "(`phoneNumber`, `fName`, `mInit`, `lName`, `sex`) "
+                    + "VALUES (" + guest.getPhoneNumber() + ", '"
+                    + guest.getfName() + "', '" + guest.getmInit() + "', '"
+                    + guest.getlName() + "', '" + guest.getSex() + "');";
+            stmt.executeUpdate(insertGuest);
+            return true;
+        } catch (SQLException e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    public static boolean createReservation(Reservation myRes){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return false;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER,ID,PW);
+            Statement stmt = conn.createStatement();
+            String pattern = "yyyy-MM-dd";
+            SimpleDateFormat format = new SimpleDateFormat(pattern);
+            String insertReservation = "INSERT INTO thurle1db.Reservation "
+                    + "(`checkInDate`, `noDaysStaying`, `guestNo`, "
+                    + "`fDeskAgentNo`, `roomNo`) "
+                    + "VALUES('" + format.format(myRes.getCheckInDate())  
+                    + "', " + myRes.getNoDaysStaying()
+                    + ", " + myRes.getGuestNo() + ", " + myRes.getfDeskAgentNo()
+                    + ", " + myRes.getRoomNo() + ");";
+            stmt.executeUpdate(insertReservation);
+            return true;
+        } catch (SQLException e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    public static List<Reservation> getReservationsForToday(){
+        Date todaysDate = Calendar.getInstance().getTime();
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        String todaysDateString = format.format(todaysDate);
+        List<Reservation> reservations = new LinkedList();
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String getTodaysReservations = "SELECT * "
+                    + "FROM thurle1db.Reservation "
+                    + "WHERE checkInDate = '" + todaysDateString + "';";
+            ResultSet rs = stmt.executeQuery(getTodaysReservations);
+            while (rs.next()){
+                Reservation myRes = new Reservation(rs.getInt("reservationNumber"), 
+                    rs.getDate("checkInDate"), rs.getInt("noDaysStaying"), 
+                    rs.getInt("guestNo"), rs.getInt("fDeskAgentNo"), 
+                    rs.getInt("roomNo"));
+                reservations.add(myRes);
+            }
+            return reservations;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+        
+        
+    }
+    public static Guest getGuestInfoFromGuestNumber(int guestNo){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String getGuest = "SELECT * "
+                    + "FROM thurle1db.Guest "
+                    + "WHERE guestNo = " + guestNo + ";";
+            ResultSet rs = stmt.executeQuery(getGuest);
+            rs.next();
+            Guest myGuest = new Guest(rs.getInt("guestNo"), rs.getInt("phoneNumber"),
+                rs.getString("fName"), rs.getString("mInit"), rs.getString("lName"),
+                rs.getString("sex"));
+            return myGuest;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Guest> getAllGuests(){
+        List<Guest> guests = new LinkedList();
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String getGuests = "SELECT * "
+                    + "FROM thurle1db.Guest;";
+            ResultSet rs = stmt.executeQuery(getGuests);
+            while(rs.next()){
+                Guest myGuest = new Guest(rs.getInt("guestNo"), rs.getInt("phoneNumber"),
+                    rs.getString("fName"), rs.getString("mInit"), rs.getString("lName"),
+                    rs.getString("sex"));
+                guests.add(myGuest);
+            }
+            return guests;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static RoomType getRoomInformation(int roomNo){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String getRoomInfo = "SELECT costDaily, description "
+                    + "FROM thurle1db.Room as room, thurle1db.RoomType as type "
+                    + "WHERE room.roomTypeId = type.roomTypeId "
+                    + "AND room.roomNo = " + roomNo + ";";
+            ResultSet rs = stmt.executeQuery(getRoomInfo);
+            rs.next();
+            RoomType type = new RoomType(rs.getInt("costDaily"), rs.getString("description"));
+            return type;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
     //JUST FOR TESTING PURPOSES
     public static void main(String[] args) {
         //FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
@@ -249,6 +411,15 @@ public class Database {
         //Manager myManager = new Manager(4, 222334444, 1104567898, "John", "Doe", "F", "M", "Some Address 3", 50000);
         //Database.addManager(myManager);
         //FDeskAgent myAgent = Database.getAgentByID(1);
+        //Guest myGuest = new Guest(1234567890, "Tim", "J", "Hurley", "M");
+        //Database.createGuest(myGuest);
+        //Date myDate = Calendar.getInstance().getTime();
+        //Reservation myReservation = new Reservation(myDate, 3, 1, 1, 1);
+        //System.out.println(Database.createReservation(myReservation));
+        //System.out.println(Database.getReservationsForToday());
+        //System.out.println(Database.getGuestInfoFromGuestNumber(1));
+        //System.out.println(Database.getAllGuests());
+        //System.out.println(Database.getRoomInformation(1));
     }
     
 }
