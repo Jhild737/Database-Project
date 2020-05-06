@@ -36,6 +36,7 @@ public class Database {
     final static String PW = "Cosc*qwe9";
     final static String SERVER = "jdbc:mysql://triton.towson.edu:3360/?serverTimezone=EST#/thurle1db";
     public static boolean addFDeskAgent(FDeskAgent agent){
+        int id = 0;
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch(ClassNotFoundException e){
@@ -45,34 +46,41 @@ public class Database {
         try{
             Connection conn = DriverManager.getConnection(SERVER, ID, PW);
             Statement stmt = conn.createStatement();
-            String staffInsert = "INSERT INTO thurle1db.Staff " + 
-                                 "VALUES(" + agent.getSSN() + ", " + 
-                                 agent.getPhoneNumber() + ", " + 
-                                 agent.getStaffId() + ", '" + agent.getfName() + 
+            String staffInsert = "INSERT INTO thurle1db.Staff (phoneNumber, fName, mInit, lName, sex)" + 
+                                 "VALUES(" + 
+                                 agent.getPhoneNumber() 
+                                 + ", '" + agent.getfName() + 
                                  "', '" + agent.getmInit() + "', '" +
-                                 agent.getlName() + "', '" + agent.getAddress() + 
-                                 "', '" + agent.getSex() + "');";
+                                 agent.getlName() 
+                                + "', '" + agent.getSex() + "');";
             stmt.executeUpdate(staffInsert);
+            Statement stmt2 = conn.createStatement();
+            ResultSet rs = stmt2.executeQuery("SELECT LAST_INSERT_ID() as id FROM thurle1db.Staff");
+            rs.next();
+            id = rs.getInt("id");
         } catch (SQLException e){
-            System.out.println(e);
+            e.printStackTrace();
+            System.out.println("First");
             return false;
         } finally{
             try{
                 Connection conn = DriverManager.getConnection(SERVER, ID, PW);
                 Statement stmt = conn.createStatement();
                 String agentInsert = "INSERT INTO thurle1db.FDeskAgent " +
-                                     "Values(" + agent.getStaffId() + ", " + 
+                                     "Values(" + id + ", " + 
                                      agent.getWage() + ", " + agent.getManagerId() + 
                                      ");";
                 stmt.executeUpdate(agentInsert);
                 return true;
             } catch(SQLException e){
+                e.printStackTrace();
                 System.out.println(e);
                 return false;
             } 
         }
     }
     public static boolean addHousekeeper(Housekeeper keeper){
+        int id = 0;
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch(ClassNotFoundException e){
@@ -82,14 +90,18 @@ public class Database {
         try{
             Connection conn = DriverManager.getConnection(SERVER, ID, PW);
             Statement stmt = conn.createStatement();
-            String staffInsert = "INSERT INTO thurle1db.Staff " + 
-                                 "VALUES(" + keeper.getSSN() + ", " + 
-                                 keeper.getPhoneNumber() + ", " + 
-                                 keeper.getStaffId() + ", '" + keeper.getfName() + 
+            String staffInsert = "INSERT INTO thurle1db.Staff (phoneNumber, fName, mInit, lName, sex)" + 
+                                 "VALUES(" + 
+                                 keeper.getPhoneNumber() 
+                                 + ", '" + keeper.getfName() + 
                                  "', '" + keeper.getmInit() + "', '" +
-                                 keeper.getlName() + "', '" + keeper.getAddress() + 
-                                 "', '" + keeper.getSex() + "');";
+                                 keeper.getlName() 
+                                + "', '" + keeper.getSex() + "');";
             stmt.executeUpdate(staffInsert);
+            Statement stmt2 = conn.createStatement();
+            ResultSet rs = stmt2.executeQuery("SELECT LAST_INSERT_ID() as id FROM thurle1db.Staff");
+            rs.next();
+            id = rs.getInt("id");
         } catch (SQLException e){
             System.out.println(e);
             return false;
@@ -98,7 +110,7 @@ public class Database {
                 Connection conn = DriverManager.getConnection(SERVER, ID, PW);
                 Statement stmt = conn.createStatement();
                 String keeperInsert = "INSERT INTO thurle1db.Housekeeper " +
-                                     "Values(" + keeper.getStaffId() + ", " + 
+                                     "Values(" + id + ", " + 
                                      keeper.getWage() + ", " + keeper.getManagerId() + 
                                      ");";
                 stmt.executeUpdate(keeperInsert);
@@ -619,8 +631,8 @@ public class Database {
     
     //JUST FOR TESTING PURPOSES
     public static void main(String[] args) {
-        //FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
-        //addFDeskAgent(myAgent);
+        FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
+        addFDeskAgent(myAgent);
         //Housekeeper myKeeper = new Housekeeper(3, 123456799, 111111111, "Jane", "J", "Doe", "Some address 2", "F", 13.0, 2);
         //addHousekeeper(myKeeper);
         //List<FDeskAgent> list = getAgentsFromDB();
@@ -662,7 +674,7 @@ public class Database {
         } */
         //Date dateCleaned = Calendar.getInstance().getTime();
         //System.out.println(Database.cleanRoom(dateCleaned, 1, 3));
-        System.out.println(Database.lastCleaningForRoom(1));
+        //System.out.println(Database.lastCleaningForRoom(1));
     }
     
 }
