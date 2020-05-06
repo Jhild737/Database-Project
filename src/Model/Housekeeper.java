@@ -33,8 +33,14 @@ public class Housekeeper extends Staff {
     public void setManagerId(int managerId) {
         this.managerId = managerId;
     }
-    public Housekeeper(int staffId, int SSN, int phoneNumber, String fName, String mInit, String lName, String address, String sex, double wage, int managerId) {
-        super(staffId, SSN, phoneNumber, fName, mInit, lName, address, sex);
+    public Housekeeper(int phoneNumber, String fName, String mInit, String lName, String sex, double wage, int managerId) {
+        super(phoneNumber, fName, mInit, lName, sex);
+        this.wage = wage;
+        this.managerId = managerId;
+    }
+
+    public Housekeeper(int staffId, int phoneNumber, String fName, String mInit, String lName, String sex, double wage, int managerId) {
+        super(staffId, phoneNumber, fName, mInit, lName, sex);
         this.wage = wage;
         this.managerId = managerId;
     }

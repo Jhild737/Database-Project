@@ -136,10 +136,10 @@ public class Database {
                             + "FROM thurle1db.FDeskAgent as agent, thurle1db.Staff as staff "
                             + "WHERE agent.staffId = staff.staffId;");
             while (resAgent.next()){
-                FDeskAgent myAgent = new FDeskAgent(resAgent.getInt("staffId"), 
-                    resAgent.getInt("SSN"), resAgent.getInt("phoneNumber"), 
+                FDeskAgent myAgent = new FDeskAgent(resAgent.getInt("staffId"),
+                        resAgent.getInt("phoneNumber"), 
                     resAgent.getString("fName"), resAgent.getString("mInit"), 
-                    resAgent.getString("lName"), resAgent.getString("address"), 
+                        resAgent.getString("lName"),
                     resAgent.getString("sex"), resAgent.getDouble("wage"), 
                     resAgent.getInt("managerId"));
                 agents.add(myAgent);
@@ -165,10 +165,10 @@ public class Database {
                             + "FROM thurle1db.Housekeeper as keeper, thurle1db.Staff as staff "
                             + "WHERE keeper.staffId = staff.staffId;");
             while (resAgent.next()){
-                Housekeeper myKeeper = new Housekeeper(resAgent.getInt("staffId"), 
-                    resAgent.getInt("SSN"), resAgent.getInt("phoneNumber"), 
+                Housekeeper myKeeper = new Housekeeper(resAgent.getInt("staffId"),
+                        resAgent.getInt("phoneNumber"), 
                     resAgent.getString("fName"), resAgent.getString("mInit"), 
-                    resAgent.getString("lName"), resAgent.getString("address"), 
+                    resAgent.getString("lName"),  
                     resAgent.getString("sex"), resAgent.getDouble("wage"), 
                     resAgent.getInt("managerId"));
                 keepers.add(myKeeper);
@@ -190,11 +190,10 @@ public class Database {
             Connection conn = DriverManager.getConnection(SERVER, ID, PW);
             Statement stmt = conn.createStatement();
             String managerInsert = "INSERT INTO thurle1db.Manager " + 
-                                 "VALUES(" + manager.getStaffId()  
-                    + ", " + manager.getSSN() + ", " +  manager.getPhoneNumber()
+                                 "VALUES(" + manager.getStaffId() + ", " +  manager.getPhoneNumber()
                     + ", '" + manager.getfName() + "', '" + manager.getmInit() 
-                    + "', '" + manager.getlName() + "', '" + manager.getSex()  
-                    + "', '" + manager.getAddress() + "', " + manager.getSalary() + ");";
+                    + "', '" + manager.getlName() + "', '" + manager.getSex()
+                    + "', " + manager.getSalary() + ");";
             System.out.println(managerInsert);
             stmt.executeUpdate(managerInsert);
             return true;
@@ -220,10 +219,10 @@ public class Database {
                     + "AND Staff.staffId = " + staffId + ";";
             ResultSet rs = stmt.executeQuery(getAgentByID);
             rs.next();
-            FDeskAgent myAgent = new FDeskAgent(rs.getInt("staffId"), 
-                    rs.getInt("SSN"), rs.getInt("phoneNumber"), 
+            FDeskAgent myAgent = new FDeskAgent(rs.getInt("staffId"),
+                    rs.getInt("phoneNumber"), 
                     rs.getString("fName"), rs.getString("mInit"), 
-                    rs.getString("lName"), rs.getString("address"), 
+                    rs.getString("lName"), 
                     rs.getString("sex"), rs.getDouble("wage"), 
                     rs.getInt("managerId"));
             return myAgent;
@@ -248,10 +247,10 @@ public class Database {
                     + "AND Staff.staffId = " + staffId + ";";
             ResultSet rs = stmt.executeQuery(getAgentByID);
             rs.next();
-            Housekeeper myKeeper = new Housekeeper(rs.getInt("staffId"), 
-                    rs.getInt("SSN"), rs.getInt("phoneNumber"), 
+            Housekeeper myKeeper = new Housekeeper(rs.getInt("staffId"),
+                    rs.getInt("phoneNumber"), 
                     rs.getString("fName"), rs.getString("mInit"), 
-                    rs.getString("lName"), rs.getString("address"), 
+                    rs.getString("lName"), 
                     rs.getString("sex"), rs.getDouble("wage"), 
                     rs.getInt("managerId"));
             return myKeeper;
@@ -473,7 +472,7 @@ public class Database {
             return false;
         }
     }
-    public static boolean assignManagerKeeper(FDeskAgent agent){
+    public static boolean assignManagerKeeper(Housekeeper keeper){
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch(ClassNotFoundException e){
@@ -484,8 +483,8 @@ public class Database {
             Connection conn = DriverManager.getConnection(SERVER, ID, PW);
             Statement stmt = conn.createStatement();
             String updateManager = "UPDATE thurle1db.Housekeeper "
-                    + "SET managerId = " + agent.getManagerId()
-                    + " WHERE staffId = " + agent.getStaffId() + ";";
+                    + "SET managerId = " + keeper.getManagerId()
+                    + " WHERE staffId = " + keeper.getStaffId() + ";";
             stmt.executeUpdate(updateManager);
             return true;
         } catch(SQLException e){
@@ -529,7 +528,7 @@ public class Database {
         try{
             Connection conn = DriverManager.getConnection(SERVER, ID, PW);
             Statement stmt = conn.createStatement();
-            String formatString = "yyyy/MM/dd";
+            String formatString = "yyyy-MM-dd";
             SimpleDateFormat sdf = new SimpleDateFormat(formatString);
             String selectString = "SELECT * "
                     + "FROM thurle1db.Schedule "
@@ -628,11 +627,58 @@ public class Database {
             return null;
         }
     }
-    
+    public static List<Manager> getAllManagers(){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        List<Manager> managers = new LinkedList();
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String selectString = "SELECT * FROM thurle1db.Manager";
+            ResultSet rs = stmt.executeQuery(selectString);
+            while (rs.next()){
+                Manager myManager = new Manager(rs.getInt("staffId"), 
+                        rs.getInt("phoneNumber"), rs.getString("fName"),
+                        rs.getString("MInit"), rs.getString("lName"),
+                        rs.getString("sex"), rs.getInt("salary"));
+                managers.add(myManager);
+                
+            }
+            return managers;
+        } catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static List<Integer> getAllRooms(){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch(ClassNotFoundException e){
+            System.out.println(e);
+            return null;
+        }
+        List<Integer> rooms = new LinkedList();
+        try{
+            Connection conn = DriverManager.getConnection(SERVER, ID, PW);
+            Statement stmt = conn.createStatement();
+            String select = "SELECT * FROM thurle1db.Room";
+            ResultSet rs = stmt.executeQuery(select);
+            while(rs.next()){
+                rooms.add(rs.getInt("roomNo"));
+            }
+            return rooms;
+        } catch(SQLException e){
+            return null;
+        }
+    }
     //JUST FOR TESTING PURPOSES
     public static void main(String[] args) {
-        FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
-        addFDeskAgent(myAgent);
+        //FDeskAgent myAgent = new FDeskAgent(3, 123456789, 111111111, "Bob", "J", "Smith", "Some address", "F", 12.50, 2);
+        //addFDeskAgent(myAgent);
         //Housekeeper myKeeper = new Housekeeper(3, 123456799, 111111111, "Jane", "J", "Doe", "Some address 2", "F", 13.0, 2);
         //addHousekeeper(myKeeper);
         //List<FDeskAgent> list = getAgentsFromDB();
@@ -675,6 +721,7 @@ public class Database {
         //Date dateCleaned = Calendar.getInstance().getTime();
         //System.out.println(Database.cleanRoom(dateCleaned, 1, 3));
         //System.out.println(Database.lastCleaningForRoom(1));
+        System.out.println(Database.getAgentByID(10));
     }
     
 }

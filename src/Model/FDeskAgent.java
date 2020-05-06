@@ -33,10 +33,14 @@ public class FDeskAgent extends Staff{
         this.managerId = managerId;
     }
     private int managerId;
-    public FDeskAgent(int staffId, int SSN, int phoneNumber, String fName, String mInit, String lName, String address, String sex, double wage, int managerId) {
-        super(staffId, SSN, phoneNumber, fName, mInit, lName, address, sex);
+    public FDeskAgent(int staffId, int phoneNumber, String fName, String mInit, String lName, String sex, double wage, int managerId) {
+        super(staffId, phoneNumber, fName, mInit, lName, sex);
         this.wage = wage;
         this.managerId = managerId;
     }
-    
+    public FDeskAgent(int phoneNumber, String fName, String mInit, String lName, String sex, double wage, int managerId){
+        super(phoneNumber, fName, mInit, lName, sex);
+        this.wage = wage;
+        this.managerId = managerId;
+    }
 }

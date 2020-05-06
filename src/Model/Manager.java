@@ -11,27 +11,23 @@ package Model;
  */
 public class Manager {
     private int staffId;
-    private int SSN;
     private int phoneNumber;
     private String fName;
     private String lName;
 
     @Override
     public String toString() {
-        return "Manager{" + "staffId=" + staffId + ", SSN=" + SSN + ", phoneNumber=" + phoneNumber + ", fName=" + fName + ", lName=" + lName + ", mInit=" + mInit + ", sex=" + sex + ", address=" + address + ", salary=" + salary + '}';
+        return "Manager{" + "staffId=" + staffId +  ", phoneNumber=" + phoneNumber + ", fName=" + fName + ", lName=" + lName + ", mInit=" + mInit + ", sex=" + sex +  ", salary=" + salary + '}';
     }
     private String mInit;
     private String sex;
-    private String address;
     private int salary;
 
     public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    
 
     public void setSalary(int salary) {
         this.salary = salary;
@@ -41,9 +37,7 @@ public class Manager {
         return staffId;
     }
 
-    public int getSSN() {
-        return SSN;
-    }
+    
 
     public int getPhoneNumber() {
         return phoneNumber;
@@ -65,23 +59,29 @@ public class Manager {
         return sex;
     }
 
-    public String getAddress() {
-        return address;
-    }
+    
 
     public int getSalary() {
         return salary;
     }
 
-    public Manager(int staffId, int SSN, int phoneNumber, String fName, String lName, String mInit, String sex, String address, int salary) {
+    public Manager(int staffId, int phoneNumber, String fName, String mInit, String lName, String sex, int salary) {
         this.staffId = staffId;
-        this.SSN = SSN;
         this.phoneNumber = phoneNumber;
         this.fName = fName;
         this.lName = lName;
         this.mInit = mInit;
         this.sex = sex;
-        this.address = address;
         this.salary = salary;
     }
+
+    public Manager(int phoneNumber, String fName, String mInit, String lName, String sex, int salary) {
+        this.phoneNumber = phoneNumber;
+        this.fName = fName;
+        this.lName = lName;
+        this.mInit = mInit;
+        this.sex = sex;
+        this.salary = salary;
+    }
+    
 }

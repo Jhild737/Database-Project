@@ -11,21 +11,17 @@ package Model;
  */
 public class Staff {
     private int staffId;
-    private int SSN;
     private int phoneNumber;
     private String fName;
     private String mInit;
     private String lName;
-    private String address;
     private String sex;
 
     public int getStaffId() {
         return staffId;
     }
 
-    public int getSSN() {
-        return SSN;
-    }
+    
 
     public int getPhoneNumber() {
         return phoneNumber;
@@ -59,13 +55,7 @@ public class Staff {
         this.lName = lName;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+   
 
     public String getSex() {
         return sex;
@@ -77,17 +67,22 @@ public class Staff {
 
     @Override
     public String toString() {
-        return "Staff{" + "staffId=" + staffId + ", SSN=" + SSN + ", phoneNumber=" + phoneNumber + ", fName=" + fName + ", mInit=" + mInit + ", lName=" + lName + ", address=" + address + ", sex=" + sex + '}';
+        return "Staff{" + "staffId=" + staffId  + ", phoneNumber=" + phoneNumber + ", fName=" + fName + ", mInit=" + mInit + ", lName=" + lName + ", sex=" + sex + '}';
     }
 
-    public Staff(int staffId, int SSN, int phoneNumber, String fName, String mInit, String lName, String address, String sex) {
+    public Staff(int staffId, int phoneNumber, String fName, String mInit, String lName, String sex) {
         this.staffId = staffId;
-        this.SSN = SSN;
         this.phoneNumber = phoneNumber;
         this.fName = fName;
         this.mInit = mInit;
         this.lName = lName;
-        this.address = address;
+        this.sex = sex;
+    }
+    public Staff(int phoneNumber, String fName, String mInit, String lName, String sex) {
+        this.phoneNumber = phoneNumber;
+        this.fName = fName;
+        this.mInit = mInit;
+        this.lName = lName;
         this.sex = sex;
     }
 }

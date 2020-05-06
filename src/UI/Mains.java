@@ -43,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class Mains {
 
@@ -223,10 +224,22 @@ public class Mains {
         btnSchedule.setBounds(479, 89, 128, 33);
         frmHotelDatabaseManager.getContentPane().add(btnSchedule);
 
+        btnSchedule.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ShowSchedule sch = new ShowSchedule();
+                sch.setVisible(true);
+            }
+        
+        });
         JButton btnEmployee = new JButton("Employee Zone");
         btnEmployee.setBounds(479, 46, 128, 33);
         frmHotelDatabaseManager.getContentPane().add(btnEmployee);
-
+            
+        btnEmployee.addActionListener((ActionEvent e) -> {
+            EmployeeZone ez = new EmployeeZone();
+            ez.setVisible(true);
+        });
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBounds(10, 38, 213, 282);
         frmHotelDatabaseManager.getContentPane().add(scrollPane);
@@ -345,7 +358,24 @@ public class Mains {
             public void actionPerformed(ActionEvent e) {
                 CreateReservation res = new CreateReservation();
                 res.setVisible(true);
+                res.addWindowListener(new WindowAdapter(){
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        super.windowClosed(e);
+                        List<Model.Reservation> reservations = Database.getReservationsForToday();
+                        String test[][] = new String[reservations.size()][3];
+                        for(int i = 0; i < reservations.size(); i++){
+                            Guest guest = Database.getGuestInfoFromGuestNumber(reservations.get(i).getGuestNo());
+                            test[i][0] = guest.getfName();
+                            test[i][1] = guest.getlName();
+                            test[i][2] = Integer.toString(reservations.get(i).getRoomNo());
+                        }
+                        String[] tColumns = {"First Name", "Last Name", "Room Number"};
+                        DefaultTableModel model = new DefaultTableModel(test, tColumns);
+                        table.setModel(model);
+                    }
                     
+                });
             }
         
         });

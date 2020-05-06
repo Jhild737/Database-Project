@@ -5,6 +5,7 @@
  */
 package UI;
 
+import Model.FDeskAgent;
 import Model.Guest;
 import Model.Reservation;
 import Model.Room;
@@ -32,6 +33,8 @@ public class CreateReservation extends javax.swing.JFrame {
      */
     public CreateReservation() {
         initComponents();
+        agentLabel.setVisible(false);
+        agentComboBox.setVisible(false);
         availRooms.setVisible(false);
         roomsLabel.setVisible(false);
         bookRoom.setVisible(false);
@@ -51,19 +54,30 @@ public class CreateReservation extends javax.swing.JFrame {
             try {
                 Date checkIn = sdf.parse(checkInDate.getText());
                 List<Room> rooms = Database.getOpenRoomsForDateRange(checkIn, Integer.parseInt(numDays.getText()));
+                availRooms.removeAllItems();
                 for(Room myRoom : rooms){
                     RoomType rt = Database.getRoomInformation(myRoom.getRoomNo());
                     String roomInfo = "Room Number: " + myRoom.getRoomNo()
-                            + ", Description: " + rt.getDescription() + ", "
+                            + " , Description: " + rt.getDescription() + ", "
                             + "Daily Cost: " + rt.getCostDaily();
-                    availRooms.removeAllItems();
+                    
+                    
+                    
                     availRooms.addItem(roomInfo);
-                    roomsLabel.setVisible(true);
-                    availRooms.setVisible(true);
-                    bookRoom.setVisible(true);
-                    checkInDate.setEditable(false);
-                    numDays.setEditable(false);
+                    
                 }
+                roomsLabel.setVisible(true);
+                availRooms.setVisible(true);
+                bookRoom.setVisible(true);
+                checkInDate.setEditable(false);
+                numDays.setEditable(false);
+                agentComboBox.setVisible(true);
+                agentLabel.setVisible(true);
+                List<FDeskAgent> agents = Database.getAgentsFromDB();
+                agents.forEach((agent) -> {
+                    agentComboBox.addItem(agent.getStaffId() + " - " + agent.getfName() + " - " + agent.getlName());
+                });
+                agentComboBox.setSelectedIndex(0);
             } catch (ParseException ex) {
                 JOptionPane.showMessageDialog(null, "Please enter date in proper format(MM/DD/YYYY)");
             }
@@ -73,10 +87,13 @@ public class CreateReservation extends javax.swing.JFrame {
             System.out.println(guestNumString);
             int guestNo = Integer.parseInt(guestNumString);
             try {
-                Date checkInDate = sdf.parse(this.checkInDate.getText());
+                Date myCheckInDate = sdf.parse(this.checkInDate.getText());
                 int days = Integer.parseInt(numDays.getText());
                 int roomNo = Integer.parseInt(availRooms.getSelectedItem().toString().split(" ")[2]);
-                
+                int staffNo = Integer.parseInt(agentComboBox.getSelectedItem().toString().split(" ")[0]);
+                Reservation myRes = new Reservation(myCheckInDate, days, guestNo, staffNo, roomNo);
+                Database.createReservation(myRes);
+                this.dispose();
             } catch (ParseException ex) {
                 
             }
@@ -105,6 +122,8 @@ public class CreateReservation extends javax.swing.JFrame {
         availRooms = new javax.swing.JComboBox<>();
         roomsLabel = new javax.swing.JLabel();
         bookRoom = new javax.swing.JButton();
+        agentLabel = new javax.swing.JLabel();
+        agentComboBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -129,6 +148,8 @@ public class CreateReservation extends javax.swing.JFrame {
 
         bookRoom.setText("Book Room");
 
+        agentLabel.setText("Front Desk Agent Reserving: ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -146,8 +167,10 @@ public class CreateReservation extends javax.swing.JFrame {
                     .addComponent(numDays, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(availRooms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(roomsLabel)
+                    .addComponent(agentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(agentLabel)
                     .addComponent(bookRoom))
-                .addContainerGap(329, Short.MAX_VALUE))
+                .addContainerGap(323, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -173,8 +196,11 @@ public class CreateReservation extends javax.swing.JFrame {
                 .addGap(3, 3, 3)
                 .addComponent(availRooms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bookRoom)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(agentLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(agentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addComponent(bookRoom))
         );
 
         pack();
@@ -216,6 +242,8 @@ public class CreateReservation extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> agentComboBox;
+    private javax.swing.JLabel agentLabel;
     private javax.swing.JComboBox<String> availRooms;
     private javax.swing.JButton bookRoom;
     private javax.swing.JTextField checkInDate;
