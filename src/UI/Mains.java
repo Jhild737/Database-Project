@@ -251,7 +251,7 @@ public class Mains {
 
         ButtonGroup btn = new ButtonGroup();
 
-        JLabel lblTableLabel = new JLabel("Guests");
+        JLabel lblTableLabel = new JLabel("Reservations");
         lblTableLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
         lblTableLabel.setHorizontalAlignment(SwingConstants.CENTER);
         lblTableLabel.setBounds(10, 10, 213, 18);

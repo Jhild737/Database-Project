@@ -66,9 +66,9 @@ public class ShowSchedule extends javax.swing.JFrame {
                 List<Schedule> newSchedule = Database.getScheduleForDay(date);
                 String data2[][] = new String[schedule.size()][5];
                 for(int i = 0; i < newSchedule.size(); i++){
-                    FDeskAgent agent = Database.getAgentByID(schedule.get(i).getStaffNo());
+                    FDeskAgent agent = Database.getAgentByID(newSchedule.get(i).getStaffNo());
                     if(agent == null){
-                        Housekeeper keeper = Database.getHousekeeperByID(schedule.get(i).getStaffNo());
+                        Housekeeper keeper = Database.getHousekeeperByID(newSchedule.get(i).getStaffNo());
                         data2[i][0] = keeper.getfName() + " " + keeper.getlName();
                         data2[i][1] = sdf.format(newSchedule.get(i).getDate());
                         data2[i][2] = newSchedule.get(i).getStartTime().format(DateTimeFormatter.ISO_LOCAL_TIME);
