@@ -34,6 +34,10 @@ public class EmployeeZone extends javax.swing.JFrame {
             CleanRoom cln = new CleanRoom();
             cln.setVisible(true);
         });
+        showRoomsClean.addActionListener((ActionEvent e) -> {
+            ShowRecentClean clean = new ShowRecentClean();
+            clean.setVisible(true);
+        });
         
     }
 
